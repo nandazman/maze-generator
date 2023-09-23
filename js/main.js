@@ -1,7 +1,7 @@
 import Maze from "./maze.js";
 
 const elCanvas = document.getElementById('canvas');
-const ctx = canvas.getContext("2d");
+const ctx = elCanvas.getContext("2d");
 const elStartBtn = document.getElementById('start');
 const elMazeMenu = document.getElementById('maze-menu');
 const elGenerateCanvastAutomaticBtn = document.getElementById('generate-maze-automatic')
