@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze</title>
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+    <main>
+        <canvas id="canvas" width="600" height="600"></canvas>
+        <div id="menu">
+            <h1>Maze Generator</h1>
+            <div class="flex-row">
+                <div class="form-group">
+                    <label for="size">Size</label>
+                    <input type="number" id="size" value="10" />
+                </div>
+                <button id="start">Start</button>
+                <div id="maze-menu" class="flex-row">
+                    <button id="generate-maze-automatic">Generate Automatic</button>
+                    <button id="generate-maze-manual">Generate Manual</button>
+                    <button id="reset-maze">Reset</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="./js/main.js" type="module"></script>
+</body>
+</html>
