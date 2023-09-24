@@ -151,18 +151,28 @@ export default class Maze {
       const next = this.grid[this.current.row - 1]?.[this.current.column];
       if (!next || this.current.wall.top) return;
       this.current = next;
-    } else if (e.keyCode === 39 || e.keyCode === 68) { // top right
-      const next = this.grid[this.current.row]?.[this.current.column + 1];
-      if (!next || this.current.wall.right) return;
-      this.current = next;
-    } else if (e.keyCode === 40 || e.keyCode === 83) { // top bottom
+    } else if (e.keyCode === 39 || e.keyCode === 68) { // right move
+      // we assume the exit only on bottom right side
+      if (this.current.row === this.grid.length - 1 && this.current.column === this.grid.length - 1) {
+        this.current = this.grid[0][0]
+      } else {
+        const next = this.grid[this.current.row]?.[this.current.column + 1];
+        if (!next || this.current.wall.right) return;
+        this.current = next;
+      }
+    } else if (e.keyCode === 40 || e.keyCode === 83) { // bottom move
       const next = this.grid[this.current.row + 1]?.[this.current.column];
       if (!next || this.current.wall.bottom) return;
       this.current = next;
-    } else if (e.keyCode === 37 || e.keyCode === 65) { // top left
-      const next = this.grid[this.current.row ]?.[this.current.column - 1];
-      if (!next || this.current.wall.left) return;
-      this.current = next;
+    } else if (e.keyCode === 37 || e.keyCode === 65) { // left move
+      // we assume the starting point only on top left
+      if (this.current.row === 0 && this.current.column === 0) {
+        this.current = this.grid[this.grid.length - 1][this.grid.length - 1]
+      } else {
+        const next = this.grid[this.current.row ]?.[this.current.column - 1];
+        if (!next || this.current.wall.left) return;
+        this.current = next;
+      }
     }
 
     prevCell.highlight = false;
