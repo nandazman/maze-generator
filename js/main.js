@@ -53,4 +53,5 @@ elResetBtn.onclick = () => {
     elGenerateCanvastManualBtn.removeAttribute("disabled", false)
     maze = new Maze(+elSizeInput.value);
     maze.draw({ reset: true })
+    window.onkeydown = null
 }

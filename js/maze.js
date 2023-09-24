@@ -3,8 +3,7 @@ const ctx = canvas.getContext("2d");
 const hookersGreen = "#5B7B7A";
 const honeyDew = "#E0F2E9";
 const beaver = "#A17C6B";
-const paleDogWood = "#CEB5A7"
-const darkCyan = "#3C887E"
+const paleDogWood = "#CEB5A7";
 
 export default class Maze {
   constructor(size) {
@@ -14,7 +13,9 @@ export default class Maze {
     this.grid = []; // will be row x grid
     this.stack = [];
     this.init = false;
+    this.playAble = false;
     this.setup();
+    this.keyListener = this.keyListener.bind(this);
   }
 
   setup() {
@@ -29,7 +30,7 @@ export default class Maze {
     }
 
     this.stack.push(this.grid[0][0]);
-    this.current = this.grid[0][0];  // first position of the grid
+    this.current = this.grid[0][0]; // first position of the grid
   }
 
   draw(options = {}) {
@@ -45,6 +46,7 @@ export default class Maze {
   }
 
   initGenerate() {
+    this.playAble = false;
     this.current.highlight = true;
     this.init = true;
     this.current.visited = true;
@@ -60,9 +62,9 @@ export default class Maze {
       if (neighbours?.length) {
         const next = neighbours[Math.floor(Math.random() * neighbours.length)];
         const current = this.current;
-        
+
         this.removeWall(current, next);
-        
+
         this.current = next;
         current.highlight = false;
 
@@ -85,17 +87,21 @@ export default class Maze {
         current.draw();
         prevCellFromStack.draw();
       } else if (!this.stack.length) {
-        const firstCell = this.grid[0][0]
-        firstCell.highlight = false
+        const firstCell = this.grid[0][0];
 
-        const start = this.grid[1][0];
-        const finish = this.grid[this.grid.length - 2][this.grid.length - 1];
+        const start = this.grid[0][0];
+        const finish = this.grid[this.grid.length - 1][this.grid.length - 1];
         start.wall.left = false;
         finish.wall.right = false;
 
-        firstCell.draw()
-        start.draw()
-        finish.draw()
+        firstCell.draw();
+        start.draw();
+        finish.draw();
+
+        this.playAble = true;
+        this.init = false;
+
+        this.initPlay();
         return;
       }
     }
@@ -132,6 +138,38 @@ export default class Maze {
       this.grid[this.current.row + 1]?.[this.current.column], // bottom
       this.grid[this.current.row]?.[this.current.column - 1], // left
     ].filter((item) => item && !item.visited);
+  }
+
+  initPlay() {
+    window.onkeydown = this.keyListener;
+  }
+
+  keyListener(e) {
+    if (!this.playAble) return;
+    const prevCell = this.current;
+    if (e.keyCode === 38 || e.keyCode === 87) { // top move
+      const next = this.grid[this.current.row - 1]?.[this.current.column];
+      if (!next || this.current.wall.top) return;
+      this.current = next;
+    } else if (e.keyCode === 39 || e.keyCode === 68) { // top right
+      const next = this.grid[this.current.row]?.[this.current.column + 1];
+      if (!next || this.current.wall.right) return;
+      this.current = next;
+    } else if (e.keyCode === 40 || e.keyCode === 83) { // top bottom
+      const next = this.grid[this.current.row + 1]?.[this.current.column];
+      if (!next || this.current.wall.bottom) return;
+      this.current = next;
+    } else if (e.keyCode === 37 || e.keyCode === 65) { // top left
+      const next = this.grid[this.current.row ]?.[this.current.column - 1];
+      if (!next || this.current.wall.left) return;
+      this.current = next;
+    }
+
+    prevCell.highlight = false;
+    this.current.highlight = true;
+
+    prevCell.draw();
+    this.current.draw();
   }
 }
 
