@@ -1,4 +1,5 @@
 import Maze from "./maze.js";
+import Solver from "./solver.js";
 
 const elCanvas = document.getElementById('canvas');
 const ctx = elCanvas.getContext("2d");
@@ -7,6 +8,7 @@ const elMazeMenu = document.getElementById('maze-menu');
 const elGenerateCanvastAutomaticBtn = document.getElementById('generate-maze-automatic')
 const elGenerateCanvastManualBtn = document.getElementById('generate-maze-manual')
 const elResetBtn = document.getElementById('reset-maze')
+const elSolveMaze = document.getElementById('solve-maze')
 const elSizeInput = document.getElementById("size")
 let maze = null
 
@@ -14,12 +16,17 @@ function updateMazeSize() {
     elCanvas.classList.remove('show')
     elMazeMenu.classList.remove('show')
     elStartBtn.style.display = ''
-    elGenerateCanvastAutomaticBtn.removeAttribute("disabled")
-    elGenerateCanvastManualBtn.removeAttribute("disabled")
     setTimeout(() => {
         ctx.reset()
     }, 200)
 }
+
+function toggleButtonHidedShow() {
+    elGenerateCanvastAutomaticBtn.classList.toggle('hidden')
+    elSolveMaze.classList.toggle("hidden")
+    elResetBtn.classList.toggle("hidden")
+}
+
 elSizeInput.onkeyup = () => {
     updateMazeSize()
 }
@@ -33,25 +40,32 @@ elStartBtn.onclick = () => {
     elMazeMenu.classList.toggle('show')
     elStartBtn.style.display = 'none'
     setTimeout(() => {
-        maze = new Maze(+elSizeInput.value);
+        maze = new Maze(+elSizeInput.value, toggleButtonHidedShow);
         maze.draw({ reset: true })
     }, 250)
 }
 elGenerateCanvastAutomaticBtn.onclick = async () => {
     maze.generateMaze()
-    elGenerateCanvastAutomaticBtn.setAttribute("disabled", true)
-    elGenerateCanvastManualBtn.setAttribute("disabled", true)
 }
 
 elGenerateCanvastManualBtn.onclick = () => {
     maze.generateMaze({ manual: true })
-    elGenerateCanvastAutomaticBtn.setAttribute("disabled", true)
 }
 
 elResetBtn.onclick = () => {
-    elGenerateCanvastAutomaticBtn.removeAttribute("disabled", false)
-    elGenerateCanvastManualBtn.removeAttribute("disabled", false)
-    maze = new Maze(+elSizeInput.value);
+    toggleButtonHidedShow()
+    elSolveMaze.setAttribute("disabled", false)
+    maze = new Maze(+elSizeInput.value, toggleButtonHidedShow);
     maze.draw({ reset: true })
     window.onkeydown = null
+}
+
+elSolveMaze.onclick = () => {
+    elSolveMaze.setAttribute("disabled", false)
+    const solver = new Solver(maze);
+
+    window.onkeydown = null
+
+    solver.initSolveMaze()
+    solver.solveMaze()
 }

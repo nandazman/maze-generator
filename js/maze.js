@@ -6,7 +6,7 @@ const beaver = "#A17C6B";
 const paleDogWood = "#CEB5A7";
 
 export default class Maze {
-  constructor(size) {
+  constructor(size, onFinish) {
     this.container = canvas.clientWidth;
     this.size = size;
     this.current = null;
@@ -16,6 +16,7 @@ export default class Maze {
     this.playAble = false;
     this.setup();
     this.keyListener = this.keyListener.bind(this);
+    this.onFinish = onFinish
   }
 
   setup() {
@@ -87,21 +88,21 @@ export default class Maze {
         current.draw();
         prevCellFromStack.draw();
       } else if (!this.stack.length) {
-        const firstCell = this.grid[0][0];
+        this.current = this.grid[0][0];
 
-        const start = this.grid[0][0];
         const finish = this.grid[this.grid.length - 1][this.grid.length - 1];
-        start.wall.left = false;
+        this.current.wall.left = false;
         finish.wall.right = false;
 
-        firstCell.draw();
-        start.draw();
+        this.current.draw();
         finish.draw();
 
         this.playAble = true;
         this.init = false;
 
         this.initPlay();
+
+        this.onFinish && this.onFinish();
         return;
       }
     }
@@ -190,7 +191,7 @@ class Cell {
     this.boxSize = boxSize;
     this.x = this.boxSize * this.column;
     this.y = this.boxSize * this.row;
-    this.visited = false;
+    this.visited = false; // to track cell if already visited or not on generation maze
     this.wall = {
       top: true,
       right: true,
@@ -200,6 +201,7 @@ class Cell {
     this.highlight = false;
     this.startPoint = false;
     this.endPoint = false;
+    this.tracked = false; // to track cell if already visited or not on solver
   }
 
   drawWall() {
@@ -245,12 +247,15 @@ class Cell {
     ctx.stroke();
   }
 
+  getSquareColor() {
+    if (this.highlight) return paleDogWood;
+    if (this.tracked) return "#000";
+    if (this.visited) return beaver;
+    return hookersGreen;
+  }
+
   drawSquare() {
-    ctx.fillStyle = this.highlight
-      ? paleDogWood
-      : this.visited
-      ? beaver
-      : hookersGreen;
+    ctx.fillStyle = this.getSquareColor()
     ctx.fillRect(this.x, this.y, this.boxSize, this.boxSize);
   }
 
